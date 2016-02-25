@@ -36,10 +36,14 @@ $(document).ready(function(){
 
 				if(row > 0 && col < 7 && !squares[(row - 1)][(col + 1)].occupied){
 					$("#i" + (row-1).toString()+(col+1).toString()).addClass("highlight");
+				} else if(row > 1 && col < 6 && !squares[(row - 2)][(col + 2)].occupied){
+					$("#i" + (row-2).toString()+(col+2).toString()).addClass("highlight");
 				}
 
 				if (row > 0 && col > 0 && !squares[(row - 1)][(col - 1)].occupied){
 					$("#i" + (row-1).toString()+(col-1).toString()).addClass("highlight");
+				} else if (row > 1 && col > 1 && !squares[(row - 2)][(col - 2)].occupied){
+					$("#i" + (row-2).toString()+(col-2).toString()).addClass("highlight");
 				}
 
 			} else if (square.chip == "red"){
@@ -48,13 +52,16 @@ $(document).ready(function(){
 				selectedSquare = square;
 				oldPos = square.position;
 
-
 				if(row < 7 && col < 7 && !squares[(row + 1)][(col + 1)].occupied){
 					$("#i" + (row + 1).toString()+(col + 1).toString()).addClass("highlight");
+				} else if(row < 6 && col < 6 && !squares[(row + 2)][(col + 2)].occupied){
+					$("#i" + (row + 2).toString()+(col + 2).toString()).addClass("highlight");
 				}
 
 				if (row < 7 && col > 0 && !squares[(row + 1)][(col - 1)].occupied){
 					$("#i" + (row + 1).toString() + (col - 1).toString()).addClass("highlight");
+				} else if (row < 6 && col > 1 && !squares[(row + 2)][(col - 2)].occupied){
+					$("#i" + (row + 2).toString() + (col - 2).toString()).addClass("highlight");
 				}
 			}
 		} else if(square.occupied && square.king){
