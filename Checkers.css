@@ -1,0 +1,71 @@
+h1	{
+	text-align: center;
+	font-family: 'Passion One';
+	font-size: 6em;
+}
+h3{
+	text-align: center;
+	background: #C51B21;
+	border-radius: 5px;
+	width: 70%;
+	margin: 0px auto;
+	color:white;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	font-family: 'Passion One';
+	font-size:3em;
+}
+.blackSquare{
+	width: 145.5px;
+	height: 145.5px;
+	background: rgba(5,5,5,0);
+	float: left;
+}
+.whiteSquare{
+	width: 145.5px;
+	height: 145.5px;
+	background: #DEDEDE;
+	float: left;
+	border-radius: 5px;
+	/*outline: 2px solid #DEB305;*/
+}
+#gameBoard{
+	/*border: 3px solid rgba(255,255,255,1);*/
+}
+.no-padding{
+	padding-left: 0px;
+	padding-right: 0px;
+}
+img{
+	margin-left: 2.75px;
+	margin-top: 2.75px;
+}
+body{
+/*background: #414141;*/
+/*background-image: url(./Assets/background.png);
+background-size: cover;*/
+/*background-image: url(./Assets/background_nuke.png);
+background-size: cover;*/
+
+
+/*background: #4B79A1; 
+background: -webkit-linear-gradient(to left, #4B79A1 , #283E51); 
+background: linear-gradient(to left, #4B79A1 , #283E51); */
+
+
+
+/*background: #1F1C2C; 
+background: -webkit-linear-gradient(to left, #1F1C2C , #928DAB); 
+background: linear-gradient(to left, #1F1C2C , #928DAB); */
+
+
+/*background: #000000;
+background: -webkit-linear-gradient(to left, #000000 , #e74c3c);
+background: linear-gradient(to left, #000000 , #e74c3c);*/        
+}
+.whiteText{
+	color: white;
+}
+.highlight{
+	background: #FFEF88;
+}
