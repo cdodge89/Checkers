@@ -69,3 +69,7 @@ background: linear-gradient(to left, #000000 , #e74c3c);*/
 .highlight{
 	background: #FFEF88;
 }
+li{
+	float: left;
+	list-style-type: none;
+}
