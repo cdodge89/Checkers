@@ -66,8 +66,11 @@ background: linear-gradient(to left, #000000 , #e74c3c);*/
 .whiteText{
 	color: white;
 }
-.highlight{
+.highlight-yellow{
 	background: #FFEF88;
+}
+.highlight-red{
+	background: #ff7d66;
 }
 li{
 	float: left;
