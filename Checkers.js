@@ -62,6 +62,7 @@ $(document).ready(function(){
 			}
 		} else if(square.occupied && square.king){
 			$(".whiteSquare").removeClass("highlight-yellow");
+			if((square.chip == "black" && blackMove) || (square.chip == "red" && !blackMove)){
 				$(this).addClass("highlight-yellow");
 				selectedSquare = square;
 				oldPos = square.position;
@@ -71,6 +72,7 @@ $(document).ready(function(){
 				} else if (square.chip == "black"){
 					checkJumpKingBlack(squares,row,col);
 				}
+			}
 				
 			//look at all four around, going along the WHOLE diagonal until running into a piece. exclude edge pieces
 		} else if(!square.occupied && $(this).hasClass("highlight-yellow")){
