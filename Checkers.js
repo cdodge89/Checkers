@@ -8,6 +8,9 @@ $(document).ready(function(){
 	var blackChipLoc = '<img src="./Assets/BlackChecker.png">';
 	var redChipKingLoc = '<img src="./Assets/RedCheckerKing.png">';
 	var blackChipKingLoc = '<img src="./Assets/BlackCheckerKing.png">';
+	var kingSelected = false;
+	var redsCaptured = 0;
+	var blacksCaptured = 0;
 	// var jumpedPiece = {position: ["n","n"], chip: "", occupied: false, king: false};
 	var jumpablePieces = []
 
@@ -58,6 +61,17 @@ $(document).ready(function(){
 				selectedSquare = {position: ["n","n"], chip: "", occupied: false, king: false};
 			}
 		} else if(square.occupied && square.king){
+			$(".whiteSquare").removeClass("highlight-yellow");
+				$(this).addClass("highlight-yellow");
+				selectedSquare = square;
+				oldPos = square.position;
+				checkMoveKing(squares,row,col);
+				if(square.chip == "red"){
+					checkJumpKingRed(squares,row,col);
+				} else if (square.chip == "black"){
+					checkJumpKingBlack(squares,row,col);
+				}
+				
 			//look at all four around, going along the WHOLE diagonal until running into a piece. exclude edge pieces
 		} else if(!square.occupied && $(this).hasClass("highlight-yellow")){
 			// console.log("oldPos2 " + oldPos[0] + oldPos[1] + oldPos[2]);
@@ -78,19 +92,17 @@ $(document).ready(function(){
 				jumpPiece(jumpablePieces, position, squares);
 				// jumpablePieces = [];
 			}
-			checkKingMe(selectedSquare.chip, position, squares);
 			
+			if (selectedSquare.chip == "black"){
+					blackMove = false;
+			} else if (selectedSquare.chip =="red"){
+				blackMove = true;
+			}
+			checkKingMe(selectedSquare.chip, position, squares);
 			if(jumpablePieces.length == 0){
 				selectedSquare = {position: ["n","n"], chip: "", occupied: false, king: false};
 				oldPos = "";
-			
-				if (blackMove){
-					blackMove = false;
-				} else{
-					blackMove = true;
-				}
 			}
-
 
 		} else{
 			$(".whiteSquare").removeClass("highlight-yellow");
@@ -98,8 +110,6 @@ $(document).ready(function(){
 			selectedSquare = {position: ["n","n"], chip: "", occupied: false, king: false};
 			// resetJumpedPiece();
 		}
-
-		
 		console.log("============");
 	});
 
@@ -242,8 +252,18 @@ function jumpPiece(arr, position, squares){
 
 		if(chip == "black"){
 			$("#black-prison").append('<li>' + blackChipLoc + '</li>');
+			blacksCaptured++;
+			if(blacksCaptured >= 12){
+				alert("Red Wins!");
+				gameReset();
+			}
 		} else if(chip == "red"){
 			$("#red-prison").append('<li>' + redChipLoc + '</li>');
+			redsCaptured++;
+			if(redsCaptured >= 12){
+				alert("Black Wins!");
+				gameReset();
+			}
 		}
 		emptySquare(squares,jpRow,jpCol);
 		$("#i"+jpRow+jpCol).text("");
@@ -285,11 +305,130 @@ function checkKingMe(color, pos, arr){
 		arr[row][col].king = true;
 		$("#i"+row.toString()+col.toString()).text("");
 		$("#i"+row.toString()+col.toString()).append(arr[row][col].img);
-	} else if(color == "red" && row[1] == 7){
-
+	} else if(color == "red" && row == 7){
+		console.log("inside");
+		arr[row][col].img = redChipKingLoc;
+		arr[row][col].king = true;
+		$("#i"+row.toString()+col.toString()).text("");
+		$("#i"+row.toString()+col.toString()).append(arr[row][col].img);
 	}
 }
 
+function checkMoveKing(arr, row, col){
+	if(row < 7 && col < 7 && !arr[(row + 1)][(col + 1)].occupied){
+			$("#i" + (row + 1).toString()+(col + 1).toString()).addClass("highlight-yellow");
+		} 
+	if (row < 7 && col > 0 && !arr[(row + 1)][(col - 1)].occupied){
+			$("#i" + (row + 1).toString() + (col - 1).toString()).addClass("highlight-yellow");
+		}
+	if(row > 0 && col < 7 && !arr[(row - 1)][(col + 1)].occupied){
+			$("#i" + (row-1).toString()+(col+1).toString()).addClass("highlight-yellow");
+		}
+	if (row > 0 && col > 0 && !arr[(row - 1)][(col - 1)].occupied){
+			$("#i" + (row-1).toString()+(col-1).toString()).addClass("highlight-yellow");
+		}
+}
 
+function checkJumpKingBlack(arr, row, col){
+	if(row > 0 && col < 7 && arr[(row - 1)][(col + 1)].occupied && arr[(row - 1)][(col + 1)].chip == "red" ){
+		if(row > 1 && col < 6 && !arr[(row - 2)][(col + 2)].occupied){
+			$("#i" + (row - 2).toString() + (col + 2).toString()).addClass("highlight-yellow");
+			$("#i" + (row - 1).toString() + (col + 1).toString()).addClass("highlight-red");
+			var jumpedPiece = arr[(row - 1)][(col + 1)];
+			jumpedPiece.jumpTo = "i" + (row - 2).toString() + (col + 2).toString();
+			jumpablePieces.push(jumpedPiece);
+			
+		}
+	}
+
+	if (row > 0 && col > 0 && arr[(row - 1)][(col - 1)].occupied && arr[(row - 1)][(col - 1)].chip == "red"){
+		if (row > 1 && col > 1 && !arr[(row - 2)][(col - 2)].occupied){
+			$("#i" + (row - 2).toString() + (col - 2).toString()).addClass("highlight-yellow");
+			$("#i" + (row - 1).toString() + (col - 1).toString()).addClass("highlight-red");
+			var jumpedPiece = arr[(row - 1)][(col - 1)];
+			jumpedPiece.jumpTo = "i" + (row - 2).toString() + (col - 2).toString();
+			jumpablePieces.push(jumpedPiece);
+			
+		}
+	}
+
+	if(row < 7 && col < 7 && arr[(row + 1)][(col + 1)].occupied && arr[(row + 1)][(col + 1)].chip == "red"){
+		if (row < 6 && col < 6 && !arr[(row + 2)][(col + 2)].occupied){
+			$("#i" + (row + 2).toString() + (col + 2).toString()).addClass("highlight-yellow");
+			$("#i" + (row + 1).toString() + (col + 1).toString()).addClass("highlight-red");
+			var jumpedPiece = arr[(row + 1)][(col + 1)];
+			jumpedPiece.jumpTo = "i" + (row + 2).toString() + (col + 2).toString();
+
+			jumpablePieces.push(jumpedPiece);
+			
+		}
+	}
+
+
+	if(row < 7 && col > 0 && arr[(row + 1)][(col - 1)].occupied && arr[(row + 1)][(col - 1)].chip == "red"){
+		if (row < 6 && col > 1 && !arr[(row + 2)][(col - 2)].occupied){
+			$("#i" + (row + 2).toString() + (col - 2).toString()).addClass("highlight-yellow");
+			$("#i" + (row + 1).toString() + (col - 1).toString()).addClass("highlight-red");
+			var jumpedPiece = arr[(row + 1)][(col - 1)];
+			jumpedPiece.jumpTo = "i" + (row + 2).toString() + (col - 2).toString();
+			
+			jumpablePieces.push(jumpedPiece);
+			
+		}
+	} 
+}
+
+function checkJumpKingRed(arr, row, col){
+	if(row > 0 && col < 7 && arr[(row - 1)][(col + 1)].occupied && arr[(row - 1)][(col + 1)].chip == "black" ){
+		if(row > 1 && col < 6 && !arr[(row - 2)][(col + 2)].occupied){
+			$("#i" + (row - 2).toString() + (col + 2).toString()).addClass("highlight-yellow");
+			$("#i" + (row - 1).toString() + (col + 1).toString()).addClass("highlight-red");
+			var jumpedPiece = arr[(row - 1)][(col + 1)];
+			jumpedPiece.jumpTo = "i" + (row - 2).toString() + (col + 2).toString();
+			jumpablePieces.push(jumpedPiece);
+			
+		}
+	}
+
+	if (row > 0 && col > 0 && arr[(row - 1)][(col - 1)].occupied && arr[(row - 1)][(col - 1)].chip == "black"){
+		if (row > 1 && col > 1 && !arr[(row - 2)][(col - 2)].occupied){
+			$("#i" + (row - 2).toString() + (col - 2).toString()).addClass("highlight-yellow");
+			$("#i" + (row - 1).toString() + (col - 1).toString()).addClass("highlight-red");
+			var jumpedPiece = arr[(row - 1)][(col - 1)];
+			jumpedPiece.jumpTo = "i" + (row - 2).toString() + (col - 2).toString();
+			jumpablePieces.push(jumpedPiece);
+			
+		}
+	}
+
+	if(row < 7 && col < 7 && arr[(row + 1)][(col + 1)].occupied && arr[(row + 1)][(col + 1)].chip == "black"){
+		if (row < 6 && col < 6 && !arr[(row + 2)][(col + 2)].occupied){
+			$("#i" + (row + 2).toString() + (col + 2).toString()).addClass("highlight-yellow");
+			$("#i" + (row + 1).toString() + (col + 1).toString()).addClass("highlight-red");
+			var jumpedPiece = arr[(row + 1)][(col + 1)];
+			jumpedPiece.jumpTo = "i" + (row + 2).toString() + (col + 2).toString();
+
+			jumpablePieces.push(jumpedPiece);
+			
+		}
+	}
+
+
+	if(row < 7 && col > 0 && arr[(row + 1)][(col - 1)].occupied && arr[(row + 1)][(col - 1)].chip == "black"){
+		if (row < 6 && col > 1 && !arr[(row + 2)][(col - 2)].occupied){
+			$("#i" + (row + 2).toString() + (col - 2).toString()).addClass("highlight-yellow");
+			$("#i" + (row + 1).toString() + (col - 1).toString()).addClass("highlight-red");
+			var jumpedPiece = arr[(row + 1)][(col - 1)];
+			jumpedPiece.jumpTo = "i" + (row + 2).toString() + (col - 2).toString();
+			
+			jumpablePieces.push(jumpedPiece);
+			
+		}
+	} 
+}
+
+function gameReset(){
+	location.reload();
+};
 });
 
