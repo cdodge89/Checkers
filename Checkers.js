@@ -273,9 +273,15 @@ function jumpPiece(arr, position, squares){
 		if(chip == "black"){
 			// console.log("chip is black");
 			checkJumpRed(squares, +position[1], +position[2]);
+			if(selectedSquare.king){
+				checkJumpKingRed(squares, +position[1], +position[2]);
+			}
 		} else if (chip == "red"){
 			// console.log("Chip is red")
 			checkJumpBlack(squares, +position[1], +position[2]);
+			if(selectedSquare.king){
+				checkJumpKingBlack(squares, +position[1], +position[2]);
+			}
 		}
 		console.log(jumpablePieces);
 		if(jumpablePieces.length > 0){
@@ -431,6 +437,6 @@ function checkJumpKingRed(arr, row, col){
 
 function gameReset(){
 	location.reload();
-};
+}
 });
 
