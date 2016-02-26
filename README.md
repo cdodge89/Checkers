@@ -4,7 +4,7 @@
 
 # Features Missing
 - King Pieces still cannot double jump
-- King pieces can move on both turns
+- ~~King pieces can move on both turns~~
 
 # Bugs
 - I have squashed all the ones I have found so far, so none at the moment
