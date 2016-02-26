@@ -3,7 +3,7 @@
 - It is built off of an array that stores the board state and updates it whenever something moves.
 
 # Features Missing
-- King Pieces still cannot double jump
+- ~~King Pieces still cannot double jump~~
 - ~~King pieces can move on both turns~~
 
 # Bugs
