@@ -16,52 +16,57 @@ h3{
 	font-size:3em;
 }
 .blackSquare{
-	width: 145.5px;
-	height: 145.5px;
+	width: 6.25vw;
+	height: 6.25vw;
 	background: rgba(5,5,5,0);
 	float: left;
 }
+.prison{
+	width: 25vw;
+}
+li{
+	width: 6.25vw;
+	/*margin: 5px;*/
+}
+/*.blackSquare:after{
+	content: "";
+  display: block;
+  padding-bottom: 100%;
+}*/
 .whiteSquare{
-	width: 145.5px;
-	height: 145.5px;
+	width: 6.25vw;
+	height: 6.25vw;
 	background: #DEDEDE;
 	float: left;
 	border-radius: 5px;
 	/*outline: 2px solid #DEB305;*/
 }
+/*.whiteSquare:after{
+	content: "";
+  display: block;
+  padding-bottom: 100%;
+}*/
 #gameBoard{
-	/*border: 3px solid rgba(255,255,255,1);*/
+	width: 100%
 }
 .no-padding{
 	padding-left: 0px;
 	padding-right: 0px;
 }
 img{
-	margin-left: 2.75px;
-	margin-top: 2.75px;
+	width: 100%;
+	/*margin-left: 2.75px;
+	margin-top: 2.75px;*/
 }
-body{
-/*background: #414141;*/
-/*background-image: url(./Assets/background.png);
-background-size: cover;*/
-/*background-image: url(./Assets/background_nuke.png);
-background-size: cover;*/
-
-
-/*background: #4B79A1; 
-background: -webkit-linear-gradient(to left, #4B79A1 , #283E51); 
-background: linear-gradient(to left, #4B79A1 , #283E51); */
-
-
-
-/*background: #1F1C2C; 
-background: -webkit-linear-gradient(to left, #1F1C2C , #928DAB); 
-background: linear-gradient(to left, #1F1C2C , #928DAB); */
-
-
-/*background: #000000;
-background: -webkit-linear-gradient(to left, #000000 , #e74c3c);
-background: linear-gradient(to left, #000000 , #e74c3c);*/        
+#test-btn{
+	background: #C51B21;
+	text-align: center;
+	color: white;
+	font-family: 'Passion One';
+	font-size: 3em;
+	width: 15vw;
+	margin: 10px auto;
+	border-radius: 5px;
 }
 .whiteText{
 	color: white;
@@ -75,4 +80,7 @@ background: linear-gradient(to left, #000000 , #e74c3c);*/
 li{
 	float: left;
 	list-style-type: none;
+}
+#page-wrap{
+	width: 100vw;
 }

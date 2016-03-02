@@ -11,51 +11,38 @@ $(document).ready(function(){
 	var kingSelected = false;
 	var redsCaptured = 0;
 	var blacksCaptured = 0;
-	// var jumpedPiece = {position: ["n","n"], chip: "", occupied: false, king: false};
 	var jumpablePieces = []
-
-	// var objectExample = {
-	// 	position: [i,2,4],
-	// 	chip: "red", or "black" or ""
-	// 	occupied: true,
-	// 	king: false
-	// }
 
 //====================START============================
 	startUp(squares, blackSquare);
-	console.log(squares);
+	
 //==================CLICK LISTENERS===============
 	$(".whiteSquare").on("click", function(){
 		$(".whiteSquare").removeClass("highlight-red");
 		var position = this.id;
-		// console.log("position " + position);
-		// console.log("oldPos " + oldPos[0] + oldPos[1] + oldPos[2]);
+		console.log(position[1]+position[2]);
 		var row = +position[1];
 		var col = +position[2];
 		var square = squares[row][col];
 		if(square.occupied && !square.king){
+			$(".whiteSquare").removeClass("highlight-yellow");
 			//1. look at all four around it, and check for jumps. The two diagonally front can be moved into, any of the four can be jumped over.
 			//2. Look at the two diagonally front, for red and black, and highlight them if they are not occupied
 			if(square.chip == "black" && blackMove){
-				$(".whiteSquare").removeClass("highlight-yellow");
 				$(this).addClass("highlight-yellow");
-				selectedSquare = square;
-				oldPos = square.position;
+
+				saveSquare(square);
+
 				checkMoveBlack(squares,row,col);
 				checkJumpBlack(squares,row,col);
-				// blackMove = false;
 			} else if (square.chip == "red" && !blackMove){
-				$(".whiteSquare").removeClass("highlight-yellow");
 				$(this).addClass("highlight-yellow");
-				selectedSquare = square;
-				oldPos = square.position;
+
+				saveSquare(square);
 				
 				checkMoveRed(squares,row,col);
 				checkJumpRed(squares,row,col);
-				// blackMove = true;
 			} else {
-				$(".whiteSquare").removeClass("highlight-yellow");
-				$(".whiteSquare").removeClass("highlight-red");
 				jumpablePieces = [];
 				oldPos = "";
 				selectedSquare = {position: ["n","n"], chip: "", occupied: false, king: false};
@@ -64,8 +51,7 @@ $(document).ready(function(){
 			$(".whiteSquare").removeClass("highlight-yellow");
 			if((square.chip == "black" && blackMove) || (square.chip == "red" && !blackMove)){
 				$(this).addClass("highlight-yellow");
-				selectedSquare = square;
-				oldPos = square.position;
+				saveSquare(square);
 				checkMoveKing(squares,row,col);
 				if(square.chip == "red"){
 					checkJumpKingRed(squares,row,col);
@@ -76,7 +62,6 @@ $(document).ready(function(){
 				
 			//look at all four around, going along the WHOLE diagonal until running into a piece. exclude edge pieces
 		} else if(!square.occupied && $(this).hasClass("highlight-yellow")){
-			// console.log("oldPos2 " + oldPos[0] + oldPos[1] + oldPos[2]);
 			$(".whiteSquare").removeClass("highlight-yellow");
 			var oldRow = +oldPos[1];
 			var oldCol = +oldPos[2];			
@@ -92,7 +77,6 @@ $(document).ready(function(){
 			//=========handle jumped piece=============
 			if(jumpablePieces.length > 0){
 				jumpPiece(jumpablePieces, position, squares);
-				// jumpablePieces = [];
 			}
 			
 			if (selectedSquare.chip == "black"){
@@ -112,7 +96,6 @@ $(document).ready(function(){
 			selectedSquare = {position: ["n","n"], chip: "", occupied: false, king: false};
 			// resetJumpedPiece();
 		}
-		console.log("============");
 	});
 
 	$(".blackSquare").on("click", function(){
@@ -124,7 +107,59 @@ $(document).ready(function(){
 		// resetJumpedPiece();
 	});
 
+	$("#test-btn").on("click", function(){
+		var idArr = [
+			54,
+			43,
+			25,
+			34,
+			43,
+			32,
+			16,
+			25,
+			65,
+			54,
+			21,
+			43,
+			65,
+			56,
+			45,
+			34,
+			43,
+			67,
+			56,
+			23,
+			32,
+			76,
+			67,
+			65,
+			76,
+			52,
+			34,
+			16,
+			76,
+			65,
+			45,
+			36,
+			65,
+			47,
+			25
+
+		]
+		var index = 0;
+		var testIntervalID = window.setInterval(function(){
+			if(index < idArr.length){
+			clickCell(idArr[index]);
+				index++;
+			}
+		},250);
+	});
+
 //===================================================FUNCTIONS=============================================
+function clickCell(id){
+	idStr = id.toString();
+	$('#i'+idStr).click();
+}
 
 function startUp(arr, flag){
 	for(var i = 0; i < 8; i++){
@@ -252,21 +287,8 @@ function jumpPiece(arr, position, squares){
 		var jpRow = jpPosition[1];
 		var jpCol = jpPosition[2];
 
-		if(chip == "black"){
-			$("#black-prison").append('<li>' + blackChipLoc + '</li>');
-			blacksCaptured++;
-			if(blacksCaptured >= 12){
-				alert("Red Wins!");
-				gameReset();
-			}
-		} else if(chip == "red"){
-			$("#red-prison").append('<li>' + redChipLoc + '</li>');
-			redsCaptured++;
-			if(redsCaptured >= 12){
-				alert("Black Wins!");
-				gameReset();
-			}
-		}
+		captureChip(chip);
+		
 		emptySquare(squares,jpRow,jpCol);
 		$("#i"+jpRow+jpCol).text("");
 		jumpablePieces = [];
@@ -283,18 +305,18 @@ function jumpPiece(arr, position, squares){
 				checkJumpKingBlack(squares, +position[1], +position[2]);
 			}
 		}
-		console.log(jumpablePieces);
+		// console.log(jumpablePieces);
 		if(jumpablePieces.length > 0){
 			//======================================
 
 			oldPos = position;
-			console.log("oldPos " , oldPos);
-			console.log("arr " , arr);
+			// console.log("oldPos " , oldPos);
+			// console.log("arr " , arr);
 
-			console.log("selected squares ", selectedSquare);
+			// console.log("selected squares ", selectedSquare);
 
 			selectedSquare = squares[+oldPos[1]][+oldPos[2]]; 
-			console.log("selected Square " + selectedSquare);
+			// console.log("selected Square " + selectedSquare);
 			// console.log("oldPos3 " + oldPos[0] + oldPos[1] + oldPos[2]);
 		}
 	} else{
@@ -304,17 +326,16 @@ function jumpPiece(arr, position, squares){
 }
 
 function checkKingMe(color, pos, arr){
-	console.log("checking king color: ",color,"pos: ",pos,"arr: ",arr);
 	var row = +pos[1];
 	var col = +pos[2];
 	if(color == "black" && row == 0){
-		console.log("inside");
+		// console.log("inside");
 		arr[row][col].img = blackChipKingLoc;
 		arr[row][col].king = true;
 		$("#i"+row.toString()+col.toString()).text("");
 		$("#i"+row.toString()+col.toString()).append(arr[row][col].img);
 	} else if(color == "red" && row == 7){
-		console.log("inside");
+		// console.log("inside");
 		arr[row][col].img = redChipKingLoc;
 		arr[row][col].king = true;
 		$("#i"+row.toString()+col.toString()).text("");
@@ -435,8 +456,32 @@ function checkJumpKingRed(arr, row, col){
 	} 
 }
 
+function saveSquare(square){
+	selectedSquare = square;
+	oldPos = square.position;
+}
+
+function captureChip(chip){
+	if(chip == "black"){
+		$("#black-prison").append('<li>' + blackChipLoc + '</li>');
+		blacksCaptured++;
+		if(blacksCaptured >= 12){
+			alert("Red Wins!");
+			gameReset();
+		}
+	} else if(chip == "red"){
+		$("#red-prison").append('<li>' + redChipLoc + '</li>');
+		redsCaptured++;
+		if(redsCaptured >= 12){
+			alert("Black Wins!");
+			gameReset();
+		}
+	}
+}
+
 function gameReset(){
-	location.reload();
+	//location.reload();
 }
 });
+
 
