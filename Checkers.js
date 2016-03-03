@@ -245,11 +245,9 @@ function checkJumpBlack(arr, row, col){
 }
 
 function jumpPiece(arr, position, squares){
-	
 	var jumpedPiece = jQuery.grep(arr, function(piece){
 		return piece.jumpTo == position;
 	});
-	
 	if(jumpedPiece.length > 0 && jumpedPiece[0].occupied){
 		var jpPosition = jumpedPiece[0].position; var chip = jumpedPiece[0].chip; var jpRow = jpPosition[1]; var jpCol = jpPosition[2];
 		captureChip(chip);
@@ -264,7 +262,6 @@ function jumpPiece(arr, position, squares){
 	} else{
 		emptyArr(arr);
 	}
-
 }
 
 function checkDoubleJump(chip, squares, position){
@@ -400,8 +397,6 @@ function checkRightDownJump(arr, row, col, color){
 		}
 	}
 }
-
-
 
 function emptyArr(arr){
 	arr = [];

@@ -17,7 +17,9 @@ h3{
 }
 .blackSquare{
 	width: 6.25vw;
+	max-width: 112px;
 	height: 6.25vw;
+	max-height: 112px;
 	background: rgba(5,5,5,0);
 	float: left;
 }
@@ -26,6 +28,7 @@ h3{
 }
 li{
 	width: 6.25vw;
+	max-width: 112px;
 	/*margin: 5px;*/
 }
 /*.blackSquare:after{
@@ -35,7 +38,9 @@ li{
 }*/
 .whiteSquare{
 	width: 6.25vw;
+	max-width: 112px;
 	height: 6.25vw;
+	max-height: 112px;
 	background: #DEDEDE;
 	float: left;
 	border-radius: 5px;
@@ -47,7 +52,8 @@ li{
   padding-bottom: 100%;
 }*/
 #gameBoard{
-	width: 100%
+	width: 100%;
+	max-width:896px;
 }
 .no-padding{
 	padding-left: 0px;
