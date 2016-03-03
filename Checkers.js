@@ -20,26 +20,20 @@ $(document).ready(function(){
 	$(".whiteSquare").on("click", function(){
 		$(".whiteSquare").removeClass("highlight-red");
 		var position = this.id;
-		console.log(position[1]+position[2]);
+		// console.log(position[1]+position[2]);
 		var row = +position[1];
 		var col = +position[2];
 		var square = squares[row][col];
 		if(square.occupied && !square.king){
 			$(".whiteSquare").removeClass("highlight-yellow");
-			//1. look at all four around it, and check for jumps. The two diagonally front can be moved into, any of the four can be jumped over.
-			//2. Look at the two diagonally front, for red and black, and highlight them if they are not occupied
 			if(square.chip == "black" && blackMove){
 				$(this).addClass("highlight-yellow");
-
 				saveSquare(square);
-
 				checkMoveBlack(squares,row,col);
 				checkJumpBlack(squares,row,col);
 			} else if (square.chip == "red" && !blackMove){
 				$(this).addClass("highlight-yellow");
-
 				saveSquare(square);
-				
 				checkMoveRed(squares,row,col);
 				checkJumpRed(squares,row,col);
 			} else {
@@ -59,7 +53,6 @@ $(document).ready(function(){
 					checkJumpKingBlack(squares,row,col);
 				}
 			}
-				
 			//look at all four around, going along the WHOLE diagonal until running into a piece. exclude edge pieces
 		} else if(!square.occupied && $(this).hasClass("highlight-yellow")){
 			$(".whiteSquare").removeClass("highlight-yellow");
@@ -78,7 +71,6 @@ $(document).ready(function(){
 			if(jumpablePieces.length > 0){
 				jumpPiece(jumpablePieces, position, squares);
 			}
-			
 			if (selectedSquare.chip == "black"){
 					blackMove = false;
 			} else if (selectedSquare.chip =="red"){
@@ -89,12 +81,10 @@ $(document).ready(function(){
 				selectedSquare = {position: ["n","n"], chip: "", occupied: false, king: false};
 				oldPos = "";
 			}
-
 		} else{
 			$(".whiteSquare").removeClass("highlight-yellow");
 			oldPos = "";
 			selectedSquare = {position: ["n","n"], chip: "", occupied: false, king: false};
-			// resetJumpedPiece();
 		}
 	});
 
@@ -104,7 +94,6 @@ $(document).ready(function(){
 		oldPos = "";
 		selectedSquare = {position: ["n","n"], chip: "", occupied: false, king: false};
 		emptyArr(jumpablePieces);
-		// resetJumpedPiece();
 	});
 
 	$("#test-btn").on("click", function(){
@@ -266,25 +255,29 @@ function jumpPiece(arr, position, squares){
 		captureChip(chip);
 		emptySquare(squares,jpRow,jpCol);
 		$("#i"+jpRow+jpCol).text("");
-		jumpablePieces = [];
-		if(chip == "black"){
-			checkJumpRed(squares, +position[1], +position[2]);
-			if(selectedSquare.king){
-				checkJumpKingRed(squares, +position[1], +position[2]);
-			}
-		} else if (chip == "red"){
-			checkJumpBlack(squares, +position[1], +position[2]);
-			if(selectedSquare.king){
-				checkJumpKingBlack(squares, +position[1], +position[2]);
-			}
-		}
-		if(jumpablePieces.length > 0){
+		jumpablePieces = []; //for some reason, I can't have this be arr. It breaks the code if I do.
+		checkDoubleJump(chip, squares, position);
+		if(arr.length > 0){
 			oldPos = position;
 			selectedSquare = squares[+oldPos[1]][+oldPos[2]];
 		}
 	} else{
 		emptyArr(arr);
-		jumpablePieces = [];
+	}
+
+}
+
+function checkDoubleJump(chip, squares, position){
+	if(chip == "black"){
+		checkJumpRed(squares, +position[1], +position[2]);
+		if(selectedSquare.king){
+			checkJumpKingRed(squares, +position[1], +position[2]);
+		}
+	} else if (chip == "red"){
+		checkJumpBlack(squares, +position[1], +position[2]);
+		if(selectedSquare.king){
+			checkJumpKingBlack(squares, +position[1], +position[2]);
+		}
 	}
 }
 
@@ -356,10 +349,6 @@ function captureChip(chip){
 	}
 }
 
-function emptyArr(arr){
-	arr = [];
-}
-
 function checkLeftUpJump(arr, row, col, color){
 	if (row > 0 && col > 0 && arr[(row - 1)][(col - 1)].occupied && arr[(row - 1)][(col - 1)].chip == color){
 		if (row > 1 && col > 1 && !arr[(row - 2)][(col - 2)].occupied){
@@ -412,8 +401,14 @@ function checkRightDownJump(arr, row, col, color){
 	}
 }
 
+
+
+function emptyArr(arr){
+	arr = [];
+}
+
 function gameReset(){
-	//location.reload();
+	location.reload();
 }
 });
 
