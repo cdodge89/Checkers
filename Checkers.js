@@ -11,52 +11,33 @@ $(document).ready(function(){
 	var kingSelected = false;
 	var redsCaptured = 0;
 	var blacksCaptured = 0;
-	// var jumpedPiece = {position: ["n","n"], chip: "", occupied: false, king: false};
 	var jumpablePieces = []
-
-	// var objectExample = {
-	// 	position: [i,2,4],
-	// 	chip: "red", or "black" or ""
-	// 	occupied: true,
-	// 	king: false
-	// }
 
 //====================START============================
 	startUp(squares, blackSquare);
-	console.log(squares);
+	
 //==================CLICK LISTENERS===============
 	$(".whiteSquare").on("click", function(){
 		$(".whiteSquare").removeClass("highlight-red");
 		var position = this.id;
-		// console.log("position " + position);
-		// console.log("oldPos " + oldPos[0] + oldPos[1] + oldPos[2]);
+		// console.log(position[1]+position[2]);
 		var row = +position[1];
 		var col = +position[2];
 		var square = squares[row][col];
 		if(square.occupied && !square.king){
-			//1. look at all four around it, and check for jumps. The two diagonally front can be moved into, any of the four can be jumped over.
-			//2. Look at the two diagonally front, for red and black, and highlight them if they are not occupied
+			$(".whiteSquare").removeClass("highlight-yellow");
 			if(square.chip == "black" && blackMove){
-				$(".whiteSquare").removeClass("highlight-yellow");
 				$(this).addClass("highlight-yellow");
-				selectedSquare = square;
-				oldPos = square.position;
+				saveSquare(square);
 				checkMoveBlack(squares,row,col);
 				checkJumpBlack(squares,row,col);
-				// blackMove = false;
 			} else if (square.chip == "red" && !blackMove){
-				$(".whiteSquare").removeClass("highlight-yellow");
 				$(this).addClass("highlight-yellow");
-				selectedSquare = square;
-				oldPos = square.position;
-				
+				saveSquare(square);
 				checkMoveRed(squares,row,col);
 				checkJumpRed(squares,row,col);
-				// blackMove = true;
 			} else {
-				$(".whiteSquare").removeClass("highlight-yellow");
-				$(".whiteSquare").removeClass("highlight-red");
-				jumpablePieces = [];
+				emptyArr(jumpablePieces);
 				oldPos = "";
 				selectedSquare = {position: ["n","n"], chip: "", occupied: false, king: false};
 			}
@@ -64,8 +45,7 @@ $(document).ready(function(){
 			$(".whiteSquare").removeClass("highlight-yellow");
 			if((square.chip == "black" && blackMove) || (square.chip == "red" && !blackMove)){
 				$(this).addClass("highlight-yellow");
-				selectedSquare = square;
-				oldPos = square.position;
+				saveSquare(square);
 				checkMoveKing(squares,row,col);
 				if(square.chip == "red"){
 					checkJumpKingRed(squares,row,col);
@@ -73,10 +53,8 @@ $(document).ready(function(){
 					checkJumpKingBlack(squares,row,col);
 				}
 			}
-				
 			//look at all four around, going along the WHOLE diagonal until running into a piece. exclude edge pieces
 		} else if(!square.occupied && $(this).hasClass("highlight-yellow")){
-			// console.log("oldPos2 " + oldPos[0] + oldPos[1] + oldPos[2]);
 			$(".whiteSquare").removeClass("highlight-yellow");
 			var oldRow = +oldPos[1];
 			var oldCol = +oldPos[2];			
@@ -92,9 +70,7 @@ $(document).ready(function(){
 			//=========handle jumped piece=============
 			if(jumpablePieces.length > 0){
 				jumpPiece(jumpablePieces, position, squares);
-				// jumpablePieces = [];
 			}
-			
 			if (selectedSquare.chip == "black"){
 					blackMove = false;
 			} else if (selectedSquare.chip =="red"){
@@ -105,14 +81,11 @@ $(document).ready(function(){
 				selectedSquare = {position: ["n","n"], chip: "", occupied: false, king: false};
 				oldPos = "";
 			}
-
 		} else{
 			$(".whiteSquare").removeClass("highlight-yellow");
 			oldPos = "";
 			selectedSquare = {position: ["n","n"], chip: "", occupied: false, king: false};
-			// resetJumpedPiece();
 		}
-		console.log("============");
 	});
 
 	$(".blackSquare").on("click", function(){
@@ -120,11 +93,88 @@ $(document).ready(function(){
 		$(".whiteSquare").removeClass("highlight-red");
 		oldPos = "";
 		selectedSquare = {position: ["n","n"], chip: "", occupied: false, king: false};
-		jumpablePieces = [];
-		// resetJumpedPiece();
+		emptyArr(jumpablePieces);
+	});
+
+	$("#test-btn").on("click", function(){
+		var idArr = [
+				52,
+				43,
+				25,
+				34,
+				43,
+				25,
+				27,
+				36,
+				54,
+				43,
+				16,
+				34,
+				52,
+				23,
+				50,
+				41,
+				23,
+				34,
+				61,
+				43,
+				25,
+				36,
+				45,
+				65,
+				54,
+				21,
+				32,
+				54,
+				43,
+				12,
+				23,
+				76,
+				65,
+				32,
+				54,
+				76,
+				74,
+				65,
+				63,
+				14,
+				36,
+				63,
+				54,
+				23,
+				34,
+				54,
+				43,
+				76,
+				54,
+				32,
+				50,
+				70,
+				61,
+				34,
+				43,
+				72,
+				63,
+				50,
+				72,
+				54
+		]
+		var index = 0;
+		var testIntervalID = window.setInterval(function(){
+			if(index < idArr.length){
+			clickCell(idArr[index]);
+				index++;
+			} else{
+				window.clearInterval(testIntervalID);
+			}
+		},250);
 	});
 
 //===================================================FUNCTIONS=============================================
+function clickCell(id){
+	idStr = id.toString();
+	$('#i'+idStr).click();
+}
 
 function startUp(arr, flag){
 	for(var i = 0; i < 8; i++){
@@ -178,31 +228,8 @@ function checkMoveRed(arr,row,col){
 }
 
 function checkJumpRed(arr, row, col){
-	// resetJumpedPiece();
-	if(row < 7 && col < 7 && arr[(row + 1)][(col + 1)].occupied && arr[(row + 1)][(col + 1)].chip == "black"){
-		if (row < 6 && col < 6 && !arr[(row + 2)][(col + 2)].occupied){
-			$("#i" + (row + 2).toString() + (col + 2).toString()).addClass("highlight-yellow");
-			$("#i" + (row + 1).toString() + (col + 1).toString()).addClass("highlight-red");
-			var jumpedPiece = arr[(row + 1)][(col + 1)];
-			jumpedPiece.jumpTo = "i" + (row + 2).toString() + (col + 2).toString();
-
-			jumpablePieces.push(jumpedPiece);
-			
-		}
-	}
-
-
-	if(row < 7 && col > 0 && arr[(row + 1)][(col - 1)].occupied && arr[(row + 1)][(col - 1)].chip == "black"){
-		if (row < 6 && col > 1 && !arr[(row + 2)][(col - 2)].occupied){
-			$("#i" + (row + 2).toString() + (col - 2).toString()).addClass("highlight-yellow");
-			$("#i" + (row + 1).toString() + (col - 1).toString()).addClass("highlight-red");
-			var jumpedPiece = arr[(row + 1)][(col - 1)];
-			jumpedPiece.jumpTo = "i" + (row + 2).toString() + (col - 2).toString();
-			
-			jumpablePieces.push(jumpedPiece);
-			
-		}
-	}
+	checkRightDownJump(arr, row, col, "black");
+	checkLeftDownJump(arr, row, col, "black");
 }
 
 function checkMoveBlack(arr, row, col){
@@ -215,106 +242,53 @@ function checkMoveBlack(arr, row, col){
 }
 
 function checkJumpBlack(arr, row, col){
-	
-	// resetJumpedPiece();
-	 if(row > 0 && col < 7 && arr[(row - 1)][(col + 1)].occupied && arr[(row - 1)][(col + 1)].chip == "red" ){
-		if(row > 1 && col < 6 && !arr[(row - 2)][(col + 2)].occupied){
-			$("#i" + (row - 2).toString() + (col + 2).toString()).addClass("highlight-yellow");
-			$("#i" + (row - 1).toString() + (col + 1).toString()).addClass("highlight-red");
-			var jumpedPiece = arr[(row - 1)][(col + 1)];
-			jumpedPiece.jumpTo = "i" + (row - 2).toString() + (col + 2).toString();
-			jumpablePieces.push(jumpedPiece);
-			
-		}
-	}
-
-	if (row > 0 && col > 0 && arr[(row - 1)][(col - 1)].occupied && arr[(row - 1)][(col - 1)].chip == "red"){
-		if (row > 1 && col > 1 && !arr[(row - 2)][(col - 2)].occupied){
-			$("#i" + (row - 2).toString() + (col - 2).toString()).addClass("highlight-yellow");
-			$("#i" + (row - 1).toString() + (col - 1).toString()).addClass("highlight-red");
-			var jumpedPiece = arr[(row - 1)][(col - 1)];
-			jumpedPiece.jumpTo = "i" + (row - 2).toString() + (col - 2).toString();
-			jumpablePieces.push(jumpedPiece);
-			
-		}
-	} 
+	checkRightUpJump(arr, row, col, "red");
+	checkLeftUpJump(arr, row, col, "red"); 
 }
 
 function jumpPiece(arr, position, squares){
-	
 	var jumpedPiece = jQuery.grep(arr, function(piece){
 		return piece.jumpTo == position;
 	});
-	
 	if(jumpedPiece.length > 0 && jumpedPiece[0].occupied){
-		var jpPosition = jumpedPiece[0].position;
-		var chip = jumpedPiece[0].chip;
-		var jpRow = jpPosition[1];
-		var jpCol = jpPosition[2];
-
-		if(chip == "black"){
-			$("#black-prison").append('<li>' + blackChipLoc + '</li>');
-			blacksCaptured++;
-			if(blacksCaptured >= 12){
-				alert("Red Wins!");
-				gameReset();
-			}
-		} else if(chip == "red"){
-			$("#red-prison").append('<li>' + redChipLoc + '</li>');
-			redsCaptured++;
-			if(redsCaptured >= 12){
-				alert("Black Wins!");
-				gameReset();
-			}
-		}
+		var jpPosition = jumpedPiece[0].position; var chip = jumpedPiece[0].chip; var jpRow = jpPosition[1]; var jpCol = jpPosition[2];
+		captureChip(chip);
 		emptySquare(squares,jpRow,jpCol);
 		$("#i"+jpRow+jpCol).text("");
-		jumpablePieces = [];
-		if(chip == "black"){
-			// console.log("chip is black");
-			checkJumpRed(squares, +position[1], +position[2]);
-			if(selectedSquare.king){
-				checkJumpKingRed(squares, +position[1], +position[2]);
-			}
-		} else if (chip == "red"){
-			// console.log("Chip is red")
-			checkJumpBlack(squares, +position[1], +position[2]);
-			if(selectedSquare.king){
-				checkJumpKingBlack(squares, +position[1], +position[2]);
-			}
-		}
-		console.log(jumpablePieces);
-		if(jumpablePieces.length > 0){
-			//======================================
-
+		jumpablePieces = []; //for some reason, I can't have this be arr. It breaks the code if I do.
+		checkDoubleJump(chip, squares, position);
+		if(arr.length > 0){
 			oldPos = position;
-			console.log("oldPos " , oldPos);
-			console.log("arr " , arr);
-
-			console.log("selected squares ", selectedSquare);
-
-			selectedSquare = squares[+oldPos[1]][+oldPos[2]]; 
-			console.log("selected Square " + selectedSquare);
-			// console.log("oldPos3 " + oldPos[0] + oldPos[1] + oldPos[2]);
+			selectedSquare = squares[+oldPos[1]][+oldPos[2]];
 		}
 	} else{
-		arr = [];
-		jumpablePieces = [];
+		emptyArr(arr);
+	}
+}
+
+function checkDoubleJump(chip, squares, position){
+	if(chip == "black"){
+		checkJumpRed(squares, +position[1], +position[2]);
+		if(selectedSquare.king){
+			checkJumpKingRed(squares, +position[1], +position[2]);
+		}
+	} else if (chip == "red"){
+		checkJumpBlack(squares, +position[1], +position[2]);
+		if(selectedSquare.king){
+			checkJumpKingBlack(squares, +position[1], +position[2]);
+		}
 	}
 }
 
 function checkKingMe(color, pos, arr){
-	console.log("checking king color: ",color,"pos: ",pos,"arr: ",arr);
 	var row = +pos[1];
 	var col = +pos[2];
 	if(color == "black" && row == 0){
-		console.log("inside");
 		arr[row][col].img = blackChipKingLoc;
 		arr[row][col].king = true;
 		$("#i"+row.toString()+col.toString()).text("");
 		$("#i"+row.toString()+col.toString()).append(arr[row][col].img);
 	} else if(color == "red" && row == 7){
-		console.log("inside");
 		arr[row][col].img = redChipKingLoc;
 		arr[row][col].king = true;
 		$("#i"+row.toString()+col.toString()).text("");
@@ -338,18 +312,44 @@ function checkMoveKing(arr, row, col){
 }
 
 function checkJumpKingBlack(arr, row, col){
-	if(row > 0 && col < 7 && arr[(row - 1)][(col + 1)].occupied && arr[(row - 1)][(col + 1)].chip == "red" ){
-		if(row > 1 && col < 6 && !arr[(row - 2)][(col + 2)].occupied){
-			$("#i" + (row - 2).toString() + (col + 2).toString()).addClass("highlight-yellow");
-			$("#i" + (row - 1).toString() + (col + 1).toString()).addClass("highlight-red");
-			var jumpedPiece = arr[(row - 1)][(col + 1)];
-			jumpedPiece.jumpTo = "i" + (row - 2).toString() + (col + 2).toString();
-			jumpablePieces.push(jumpedPiece);
-			
+	checkRightUpJump(arr, row, col, "red");
+	checkLeftUpJump(arr, row, col, "red");
+	checkRightDownJump(arr, row, col, "red");
+	checkLeftDownJump(arr, row, col, "red");
+}
+
+function checkJumpKingRed(arr, row, col){
+	checkRightUpJump(arr, row, col, "black");
+	checkLeftUpJump(arr, row, col, "black");
+	checkRightDownJump(arr, row, col, "black");
+	checkLeftDownJump(arr, row, col, "black");
+}
+
+function saveSquare(square){
+	selectedSquare = square;
+	oldPos = square.position;
+}
+
+function captureChip(chip){
+	if(chip == "black"){
+		$("#black-prison").append('<li>' + blackChipLoc + '</li>');
+		blacksCaptured++;
+		if(blacksCaptured >= 12){
+			alert("Red Wins!");
+			gameReset();
+		}
+	} else if(chip == "red"){
+		$("#red-prison").append('<li>' + redChipLoc + '</li>');
+		redsCaptured++;
+		if(redsCaptured >= 12){
+			alert("Black Wins!");
+			gameReset();
 		}
 	}
+}
 
-	if (row > 0 && col > 0 && arr[(row - 1)][(col - 1)].occupied && arr[(row - 1)][(col - 1)].chip == "red"){
+function checkLeftUpJump(arr, row, col, color){
+	if (row > 0 && col > 0 && arr[(row - 1)][(col - 1)].occupied && arr[(row - 1)][(col - 1)].chip == color){
 		if (row > 1 && col > 1 && !arr[(row - 2)][(col - 2)].occupied){
 			$("#i" + (row - 2).toString() + (col - 2).toString()).addClass("highlight-yellow");
 			$("#i" + (row - 1).toString() + (col - 1).toString()).addClass("highlight-red");
@@ -359,35 +359,23 @@ function checkJumpKingBlack(arr, row, col){
 			
 		}
 	}
+}
 
-	if(row < 7 && col < 7 && arr[(row + 1)][(col + 1)].occupied && arr[(row + 1)][(col + 1)].chip == "red"){
-		if (row < 6 && col < 6 && !arr[(row + 2)][(col + 2)].occupied){
-			$("#i" + (row + 2).toString() + (col + 2).toString()).addClass("highlight-yellow");
-			$("#i" + (row + 1).toString() + (col + 1).toString()).addClass("highlight-red");
-			var jumpedPiece = arr[(row + 1)][(col + 1)];
-			jumpedPiece.jumpTo = "i" + (row + 2).toString() + (col + 2).toString();
-
-			jumpablePieces.push(jumpedPiece);
-			
-		}
-	}
-
-
-	if(row < 7 && col > 0 && arr[(row + 1)][(col - 1)].occupied && arr[(row + 1)][(col - 1)].chip == "red"){
+function checkLeftDownJump(arr, row, col, color){
+	if(row < 7 && col > 0 && arr[(row + 1)][(col - 1)].occupied && arr[(row + 1)][(col - 1)].chip == color){
 		if (row < 6 && col > 1 && !arr[(row + 2)][(col - 2)].occupied){
 			$("#i" + (row + 2).toString() + (col - 2).toString()).addClass("highlight-yellow");
 			$("#i" + (row + 1).toString() + (col - 1).toString()).addClass("highlight-red");
 			var jumpedPiece = arr[(row + 1)][(col - 1)];
-			jumpedPiece.jumpTo = "i" + (row + 2).toString() + (col - 2).toString();
-			
+			jumpedPiece.jumpTo = "i" + (row + 2).toString() + (col - 2).toString();			
 			jumpablePieces.push(jumpedPiece);
 			
 		}
 	} 
 }
 
-function checkJumpKingRed(arr, row, col){
-	if(row > 0 && col < 7 && arr[(row - 1)][(col + 1)].occupied && arr[(row - 1)][(col + 1)].chip == "black" ){
+function checkRightUpJump(arr, row, col, color){
+	if(row > 0 && col < 7 && arr[(row - 1)][(col + 1)].occupied && arr[(row - 1)][(col + 1)].chip == color ){
 		if(row > 1 && col < 6 && !arr[(row - 2)][(col + 2)].occupied){
 			$("#i" + (row - 2).toString() + (col + 2).toString()).addClass("highlight-yellow");
 			$("#i" + (row - 1).toString() + (col + 1).toString()).addClass("highlight-red");
@@ -397,46 +385,28 @@ function checkJumpKingRed(arr, row, col){
 			
 		}
 	}
+}
 
-	if (row > 0 && col > 0 && arr[(row - 1)][(col - 1)].occupied && arr[(row - 1)][(col - 1)].chip == "black"){
-		if (row > 1 && col > 1 && !arr[(row - 2)][(col - 2)].occupied){
-			$("#i" + (row - 2).toString() + (col - 2).toString()).addClass("highlight-yellow");
-			$("#i" + (row - 1).toString() + (col - 1).toString()).addClass("highlight-red");
-			var jumpedPiece = arr[(row - 1)][(col - 1)];
-			jumpedPiece.jumpTo = "i" + (row - 2).toString() + (col - 2).toString();
-			jumpablePieces.push(jumpedPiece);
-			
-		}
-	}
-
-	if(row < 7 && col < 7 && arr[(row + 1)][(col + 1)].occupied && arr[(row + 1)][(col + 1)].chip == "black"){
+function checkRightDownJump(arr, row, col, color){
+	if(row < 7 && col < 7 && arr[(row + 1)][(col + 1)].occupied && arr[(row + 1)][(col + 1)].chip == color){
 		if (row < 6 && col < 6 && !arr[(row + 2)][(col + 2)].occupied){
 			$("#i" + (row + 2).toString() + (col + 2).toString()).addClass("highlight-yellow");
 			$("#i" + (row + 1).toString() + (col + 1).toString()).addClass("highlight-red");
 			var jumpedPiece = arr[(row + 1)][(col + 1)];
 			jumpedPiece.jumpTo = "i" + (row + 2).toString() + (col + 2).toString();
-
 			jumpablePieces.push(jumpedPiece);
 			
 		}
 	}
+}
 
-
-	if(row < 7 && col > 0 && arr[(row + 1)][(col - 1)].occupied && arr[(row + 1)][(col - 1)].chip == "black"){
-		if (row < 6 && col > 1 && !arr[(row + 2)][(col - 2)].occupied){
-			$("#i" + (row + 2).toString() + (col - 2).toString()).addClass("highlight-yellow");
-			$("#i" + (row + 1).toString() + (col - 1).toString()).addClass("highlight-red");
-			var jumpedPiece = arr[(row + 1)][(col - 1)];
-			jumpedPiece.jumpTo = "i" + (row + 2).toString() + (col - 2).toString();
-			
-			jumpablePieces.push(jumpedPiece);
-			
-		}
-	} 
+function emptyArr(arr){
+	arr = [];
 }
 
 function gameReset(){
 	location.reload();
 }
 });
+
 
