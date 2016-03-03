@@ -18,8 +18,10 @@ h3{
 .blackSquare{
 	width: 6.25vw;
 	max-width: 112px;
+	min-width: 63px;
 	height: 6.25vw;
 	max-height: 112px;
+	/*min-height: 63px;*/
 	background: rgba(5,5,5,0);
 	float: left;
 }
@@ -39,8 +41,10 @@ li{
 .whiteSquare{
 	width: 6.25vw;
 	max-width: 112px;
+	min-width: 63px;
 	height: 6.25vw;
 	max-height: 112px;
+	/*min-height: 63px;*/
 	background: #DEDEDE;
 	float: left;
 	border-radius: 5px;
@@ -54,6 +58,9 @@ li{
 #gameBoard{
 	width: 100%;
 	max-width:896px;
+	max-height:896px;
+	min-width: 504px;
+	/*min-height: 504px;*/
 }
 .no-padding{
 	padding-left: 0px;
@@ -73,6 +80,9 @@ img{
 	width: 15vw;
 	margin: 10px auto;
 	border-radius: 5px;
+}
+#test-btn:hover{
+	background: #911418;
 }
 .whiteText{
 	color: white;
